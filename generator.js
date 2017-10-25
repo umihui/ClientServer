@@ -54,10 +54,10 @@ const perKm = 1.2;
 const timeRatio = 1;
 const minimum = 6;
 //inputs : distance from db, surgeRatio, RushHour
-const convertPrice = (distance, surge) => {
+const convertPrice = (distance) => {
   let time = (distance / 200) * timeRatio;
-  let finalPrice = (distance / 1000 * perKm + time * perMin) * surge;
-  return finalPrice.toFixed(2) > minimum ? finalPrice.toFixed(2) : minimum ;
+  let finalPrice = (distance / 1000 * perKm + time * perMin).toFixed(2);
+  return finalPrice > minimum ? finalPrice : minimum ;
 }
 
 const findZone = (start) => {
@@ -89,7 +89,7 @@ const conversion = (rate) => {
 //6159, 7496,5188, 4074
 //console.log(convertPrice(6159, 7496,5188, 4074));
 //console.log(generateCoordinatesWithPeakZone());
-//console.log(convertPrice(1700, 4));
+console.log(convertPrice(5700));
 var a = generateCoordinatesWithPeakZone();
 console.log(a);
 console.log(findZone(a));

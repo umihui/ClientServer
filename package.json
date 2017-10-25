@@ -1,0 +1,24 @@
+{
+  "name": "clientserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umihui/ClientServer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/umihui/ClientServer/issues"
+  },
+  "homepage": "https://github.com/umihui/ClientServer#readme",
+  "dependencies": {
+    "knex": "^0.13.0",
+    "pg": "^7.3.0",
+    "uuid": "^3.1.0"
+  }
+}
