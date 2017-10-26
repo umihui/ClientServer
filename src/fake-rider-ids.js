@@ -2,13 +2,11 @@ var uuid = require('uuid');
 var fs = require('fs');
 var db = require('./db');
 
-// var insertId = (id) => {
-//   return
-// }
 
-
+for(var i = 0; i < 100000; i++) {
   var id = {'rider_id': uuid.v4()};
-  db('riders').insert({'riderid':'umi'})
+  db('riders').insert(id).then((result) => true)
+}
   // console.log(id);
   // insertId(id);
 

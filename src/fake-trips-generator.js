@@ -2,10 +2,12 @@ const FakeTrip = require('./fake-trips-helper');
 const db = require('./db');
 
 var insertTrip = (trip) => {
-  db('trips').insert(trip)
+  return db('trips').insert(trip)
 }
 
-
+for(var i = 0; i < 100000; i++) {
   let trip = new FakeTrip();
-  console.log(trip);
-  insertTrip(trip);
+  if (trip.distance) {
+    insertTrip(trip).then(() => true);
+  }
+}

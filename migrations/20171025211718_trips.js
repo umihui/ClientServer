@@ -1,3 +1,4 @@
+
 exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('trips', (table) => {
@@ -10,7 +11,7 @@ exports.up = function(knex, Promise) {
     }),
     knex.schema.createTable('riders', (table) => {
       table.increments('id').primary();
-      table.string('riderid');
+      table.string('rider_id');
     }),
     knex.schema.createTable('test', (table) => {
       table.increments('id').primary();
