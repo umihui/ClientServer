@@ -1,9 +1,3 @@
-let list = [];
-
-const getFakeTrip = () => {
-
-}
-
 const getRandom = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 const generateCoordinates = (minX, maxX, minY, maxY) => {
@@ -30,6 +24,20 @@ const validateTrip = (start, end) => {
   if (distance < 1600) {
     return false;
   } else {
-    return {distance};
+    return Math.round(distance);
+  }
+}
+
+module.exports = class FakeTrip {
+  constructor () {
+    let pickup = generateCoordinatesWithPeakZone();
+    let dropoff = generateCoordinatesWithPeakZone();
+    if(validateTrip(pickup, dropoff)) {
+      this['pickup-x'] = pickup.x;
+      this['pickup-y'] = pickup.y;
+      this['dropoff-x'] = dropoff.x;
+      this['dropoff-y'] = dropoff.y;
+      this.distance = validateTrip(pickup, dropoff);
+    }
   }
 }
