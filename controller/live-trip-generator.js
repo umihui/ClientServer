@@ -39,18 +39,19 @@ const makeliveTrip = (trip) => {
   return trip;
 }
 
-const getBatchTrips = (n) => {
+var getBatchTrips = (n) => {
   let values = [];
   for (var i = 0; i < n; i++) {
     let a = Math.random() * 94523;
     values.push(Math.round(a));
   }
-  db.select().from('trips')
-  .whereIn('id', values)
-  .then(results => results.forEach(trip => db('requests').insert(makeliveTrip(trip))
-    .then(() => console.log('done'))
-    )
-  );
+  return db.select().from('trips')
+    .whereIn('id', values)
+    .then(results => results.map(trip => makeliveTrip(trip)))
+    .then((results) => console.log(results))
+
+
 };
 
 getBatchTrips(5);
+module.exports = getBatchTrips;

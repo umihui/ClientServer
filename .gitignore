@@ -4,3 +4,4 @@ fake-rider-ids.json
 lib
 utility
 .gitignore
+package-lock.json
