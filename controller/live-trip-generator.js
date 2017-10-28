@@ -45,7 +45,7 @@ const makeliveTrip = (trip) => {
 const getBatchTrips = (n) => {
   const values = [];
   for (let i = 0; i < n; i++) {
-    const a = Math.random() * 94479;
+    const a = Math.random() * 94769;
     values.push(Math.round(a));
   }
   return db.select().from('trips')

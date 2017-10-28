@@ -1,5 +1,7 @@
 const db = require('../src/db');
-const test = [ { 'pickup-x': 6812,
+
+const test = [
+   { 'pickup-x': 6812,
     'pickup-y': 8707,
     'dropoff-x': 4226,
     'dropoff-y': 2785,
@@ -28,7 +30,7 @@ const test = [ { 'pickup-x': 6812,
     finalPrice: 11.53,
     zone: 24,
     confirm: false,
-    created_at: '2017-10-28T02:33:54.010Z' },
+    created_at: '2017-10-28T02:33:54.010Z'},
   { 'pickup-x': 5773,
     'pickup-y': 8266,
     'dropoff-x': 1147,
@@ -38,7 +40,7 @@ const test = [ { 'pickup-x': 6812,
     finalPrice: 15.67,
     zone: 86,
     confirm: false,
-    created_at: '2017-10-28T02:33:54.010Z' },
+    created_at: '2017-10-28T02:33:54.010Z'},
   { 'pickup-x': 6131,
     'pickup-y': 2580,
     'dropoff-x': 8367,
@@ -48,23 +50,17 @@ const test = [ { 'pickup-x': 6812,
     finalPrice: 23.56,
     zone: 27,
     confirm: true,
-    created_at: '2017-10-28T02:33:54.010Z' } ]
+    created_at: '2017-10-28T02:33:54.010Z'}];
 
-const eyeballsByZone = (trips) => {
-  let cache = {};
-  trips.forEach( trip => {
-      console.log(trip);
-    cache[trip.zone] ? cache[trip.zone]++ : cache[trip.zone] = 1;
+const eyeballsByZone = (cache, callback) => {
+  const temp = {};
+  cache.forEach( (trip) => {
+    console.log(trip);
+    temp[trip.zone] ? temp[trip.zone] += 1 : temp[trip.zone] = 1;
   })
-  let result = [];
-  for(var key in cache) {
-    result.push({zone:Number(key),eyeballs: cache[key]});
+  const result = [];
+  for(var key in temp) {
+    result.push({zone: Number(key), eyeballs: temp[key]});
   }
-  return result;
+  callback(result);
 }
-
-eyeballsByZone(test);
-
-// concat all the result  send them every 10s
-trips.filter( trip => !!trip.confirm)
-     .map( trip => );
