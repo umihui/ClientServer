@@ -1,57 +1,73 @@
 const db = require('../src/db');
 const Promise = require('bluebird');
+const axios = require('axios');
+const http = require('http');
 
-let perMin = 0.2;
-let perKm = 1.2;
-let timeRatio = 1;
-let minimum = 6;
-let conversionRate = 0.5;
-//live data stream
-//inputs : distance from db, surgeRatio, RushHour
+const perMin = 0.2;
+const perKm = 1.2;
+const timeRatio = 1;
+const minimum = 6;
+const conversionRate = 0.5;
+// live data stream
+// inputs : distance from db, surgeRatio, RushHour
 const convertPrice = (distance) => {
-  let time = (distance / 200) * timeRatio;
-  let finalPrice = (distance / 1000 * perKm + time * perMin).toFixed(2);
+  const time = (distance / 200) * timeRatio;
+  const finalPrice = (distance / 1000 * perKm + time * perMin).toFixed(2);
   return finalPrice > minimum ? finalPrice : minimum ;
-}
+};
 
 const zoneNo = (x, y) => {
-	let ones = Math.floor(x/1000) + 1;
-	let tens = Math.floor(y/1000);
-	return (tens * 10 + ones);
-}
+  const ones = Math.floor(x / 1000) + 1;
+  const tens = Math.floor(y / 1000);
+  return (tens * 10) + ones;
+};
 
-//input is like 0.9,0.8
+// input is like 0.9,0.8
 const conversion = (rate) => {
-  let a = Math.random();
+  const a = Math.random();
   if (a < rate) {
     return true;
-  } else {
-    return false;
   }
-}
+  return false;
+};
 
 const makeliveTrip = (trip) => {
-  delete trip.id;
-  trip['rider_id'] = Math.floor(Math.random() * 200000);
-  trip.finalPrice = Number(convertPrice(trip.distance));
-  trip.zone = zoneNo(trip['pickup-x'],trip['pickup-y']);
-  trip.confirm = conversion(conversionRate);
-  return trip;
-}
+  const result = trip;
+  delete result.id;
+  result.rider_id = Math.floor(Math.random() * 200000);
+  result['final-Price'] = Number(convertPrice(result.distance));
+  result.zone = zoneNo(result['pickup-x'], result['pickup-y']);
+  result.confirm = conversion(conversionRate);
+  result.created_at = new Date();
+  return result;
+};
 
-var getBatchTrips = (n) => {
-  let values = [];
-  for (var i = 0; i < n; i++) {
-    let a = Math.random() * 94523;
+const getBatchTrips = (n) => {
+  const values = [];
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * 94479;
     values.push(Math.round(a));
   }
   return db.select().from('trips')
     .whereIn('id', values)
-    .then(results => results.map(trip => makeliveTrip(trip)))
-    .then((results) => console.log(results))
-
-
+    .then(results => results.map(trip => makeliveTrip(trip)));
 };
 
-getBatchTrips(5);
+getBatchTrips(5)
+  .then((results) => {
+    results.forEach((trip) => {
+      axios({
+        method: 'post',
+        url: 'http://localhost:3000/test',
+        data: trip,
+      })
+        .then(() => {
+          console.log('success');
+        })
+        .catch((err) => {
+          console.log('fail', err);
+        });
+    });
+  });
+
 module.exports = getBatchTrips;

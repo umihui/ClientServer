@@ -5,3 +5,4 @@ lib
 utility
 .gitignore
 package-lock.json
+*.json

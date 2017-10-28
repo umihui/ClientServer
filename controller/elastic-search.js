@@ -1,17 +1,14 @@
+const db = require('../src/db');
+const elasticsearch = require('elasticsearch');
+const Promise = require('bluebird');
+const getBatchTrips = require('./live-trip-generator.js')
 
+const log = console.log.bind(console);
 
-var elasticsearch = require('elasticsearch');
-var Promise = require('bluebird');
-var getBatchTrips = require('./live-trip-generator.js')
-
-var log = console.log.bind(console);
-
-var client = new elasticsearch.Client({
+const client = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'trace'
 });
-
-
 
 function addToIndex(trip) {
   return client.index({
@@ -21,15 +18,21 @@ function addToIndex(trip) {
   });
 }
 
+// function closeConnection() {
+//   client.close();
+// }
+
+const liveData = n => Promise.resolve()
+  .then(() => getBatchTrips(n))
+  .then(results => results.forEach((trip) => {
+    db('requests').insert(trip)
+      .then(() => {
+        console.log('addindex', trip);
+        addToIndex(trip);
+      });
+  }));
+
+setInterval(() => liveData(5), 1000);
 
 
-function closeConnection() {
-  client.close();
-}
-
-
-Promise.resolve()
-  .then(() => getBatchTrips(5))
-  .then(() => addToIndex(trip))
-  .then(closeConnection);
-db('requests').insert(makeliveTrip(trip)
+// db('requests').insert(makeliveTrip(trip)
