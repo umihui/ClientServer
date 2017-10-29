@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const Util = require('./Util');
+const addToIndex = require('../controller/elastic-search');
 
 const app = express();
 const port = 3000;
@@ -26,7 +27,7 @@ app.post('/test', (req, res) => {
       .then((result) => {
         let surge = Number(result['surge-ratio']);
         Util.applySurge(trip, surge)
-          .then(booking => Util.sendBooking(booking))
+          .then(booking => addToIndex(booking))
           .then(() => console.log('sendbooking success'));
       })
   }

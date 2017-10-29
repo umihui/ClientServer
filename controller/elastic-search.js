@@ -32,7 +32,8 @@ const liveData = n => Promise.resolve()
       });
   }));
 
-setInterval(() => liveData(5), 1000);
+module.exports = addToIndex;
+//setInterval(() => liveData(5), 1000);
 
 
 // db('requests').insert(makeliveTrip(trip)

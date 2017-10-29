@@ -7,7 +7,7 @@ const perMin = 0.2;
 const perKm = 1.2;
 const timeRatio = 1;
 const minimum = 6;
-const conversionRate = 0.5;
+const conversionRate = 0.7;
 // live data stream
 // inputs : distance from db, surgeRatio, RushHour
 const convertPrice = (distance) => {
@@ -53,21 +53,26 @@ const getBatchTrips = (n) => {
     .then(results => results.map(trip => makeliveTrip(trip)));
 };
 
-getBatchTrips(5)
-  .then((results) => {
-    results.forEach((trip) => {
-      axios({
-        method: 'post',
-        url: 'http://localhost:3000/test',
-        data: trip,
-      })
-        .then(() => {
-          console.log('success');
+const generateRandomBatch = () => {
+  const n = Math.floor(Math.random() * 10);
+  getBatchTrips(n)
+    .then((results) => {
+      results.forEach((trip) => {
+        axios({
+          method: 'post',
+          url: 'http://localhost:3000/test',
+          data: trip,
         })
-        .catch((err) => {
-          console.log('fail', err);
-        });
+          .then(() => {
+            console.log('success');
+          })
+          .catch((err) => {
+            console.log('fail', err);
+          });
+      });
     });
-  });
+}
+
+setInterval(generateRandomBatch, 500);
 
 module.exports = getBatchTrips;
