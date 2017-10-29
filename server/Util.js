@@ -15,8 +15,8 @@ const getSurgeRatioByZone = (zoneNum) => {
 // apply surge ratio on incoming trips
 const applySurge = (trip, surge) => {
   const result = trip;
-  const price = trip['final-Price'] * surge;
-  result['final-Price'] = Math.round(price * 100) / 100;
+  const price = trip['final-price'] * surge;
+  result['final-price'] = Math.round(price * 100) / 100;
   return Promise.resolve(result);
 };
 
@@ -33,26 +33,29 @@ const sendBooking = (booking) => {
 const eyeballsByZone = (cache, callback) => {
   const temp = {};
   cache.forEach((trip) => {
-    temp[trip.zone] ? temp[trip.zone] += 1 : temp[trip.zone] = 1;
+    if (temp[trip.zone]) {
+      temp[trip.zone] += 1;
+    } else {
+      temp[trip.zone] = 1;
+    }
   });
   const result = [];
-  for(var key in temp) {
-    result.push({zone: Number(key), eyeballs: temp[key]});
-  }
-  callback(result);
-}
-
-
-const sendEyeballs = (eyeballs) => {
-  return axios({
-    method: 'post',
-    url: 'http://localhost:8080/eyeballs',
-    data: eyeballs,
+  Object.keys(temp).forEach((key) => {
+    result.push({ zone: Number(key), eyeballs: temp[key] });
   });
+  callback(result);
 };
+
+
+const sendEyeballs = eyeballs => axios({
+  method: 'post',
+  url: 'http://localhost:8080/eyeballs',
+  data: eyeballs,
+});
+
 
 module.exports.eyeballsByZone = eyeballsByZone;
 module.exports.applySurge = applySurge;
 module.exports.sendBooking = sendBooking;
 module.exports.sendEyeballs = sendEyeballs;
-module.exports.getSurgeRatioByZone = getSurgeRatioByZone; 
+module.exports.getSurgeRatioByZone = getSurgeRatioByZone;

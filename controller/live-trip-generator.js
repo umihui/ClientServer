@@ -35,7 +35,7 @@ const makeliveTrip = (trip) => {
   const result = trip;
   delete result.id;
   result.rider_id = Math.floor(Math.random() * 200000);
-  result['final-Price'] = Number(convertPrice(result.distance));
+  result['final-price'] = Number(convertPrice(result.distance));
   result.zone = zoneNo(result['pickup-x'], result['pickup-y']);
   result.confirm = conversion(conversionRate);
   result.created_at = new Date();
@@ -73,6 +73,6 @@ const generateRandomBatch = () => {
     });
 }
 
-setInterval(generateRandomBatch, 500);
+//setInterval(generateRandomBatch, 500);
 
 module.exports = getBatchTrips;
