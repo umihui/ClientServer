@@ -32,11 +32,11 @@ const sendBooking = (booking) => {
 // batching trips in cache
 const eyeballsByZone = (cache, callback) => {
   const temp = {};
-  cache.forEach((trip) => {
-    if (temp[trip.zone]) {
-      temp[trip.zone] += 1;
+  cache.forEach((zone) => {
+    if (temp[zone]) {
+      temp[zone] += 1;
     } else {
-      temp[trip.zone] = 1;
+      temp[zone] = 1;
     }
   });
   const result = [];

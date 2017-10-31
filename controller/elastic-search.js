@@ -18,6 +18,14 @@ function addToIndex(trip) {
   });
 }
 
+function addToIndexEyeball(trip) {
+  return client.index({
+    index: 'trips',
+    type: 'eyeball',
+    body: { zone: trip.zone }.
+  });
+}
+
 // function closeConnection() {
 //   client.close();
 // }
@@ -32,7 +40,7 @@ const liveData = n => Promise.resolve()
       });
   }));
 
-module.exports = addToIndex;
+module.exports = elastic;
 //setInterval(() => liveData(5), 1000);
 
 

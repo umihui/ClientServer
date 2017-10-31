@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const Util = require('./Util');
-const addToIndex = require('../controller/elastic-search');
+const elastic = require('../controller/elastic-search');
 const db = require('../src/db');
 
 const app = express();
@@ -15,18 +15,19 @@ app.use(bodyParser.json());
 
 // take in user request
 // convert to eyeball in memory
-// apply surge rate on true booking
-// send booking to messege bus
-// send eyeball sum to surge per 10 seconds
+// apply surge rate on  booking
+// response with surge price
 
-app.post('/test', (req, res) => {
+
+app.post('/eyeball', (req, res) => {
   const trip = req.body
-  cache.push(trip);
+  cache.push(trip.zone);
   db('requests').insert(trip)
     .then(() => {
       console.log('addindex', trip);
-      addToIndex(trip);
-    })
+      elastic.addToIndex(trip)
+        .then(() => res.end());
+    });
     // .then(() => {
     //   if (trip.confirm) {
     //     Util.getSurgeRatioByZone(trip.zone)
@@ -39,6 +40,16 @@ app.post('/test', (req, res) => {
     //   }
     // })
     
+});
+
+
+// confirm booking come with surge price
+// send booking to messege bus
+// send eyeball sum to surge per 10 seconds
+
+app.post('/booking', (req, res) => {
+  const trip = req.body;
+
 });
 
 
