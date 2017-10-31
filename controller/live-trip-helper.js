@@ -6,7 +6,7 @@ const perMin = 20;
 const perKm = 120;
 const timeRatio = 1;
 const minimum = 600;
-const conversionRate = 0.7;
+// const conversionRate = 0.7;
 // live data stream
 // inputs : distance from db, surgeRatio, RushHour
 
@@ -22,33 +22,7 @@ const zoneNo = (x, y) => {
   return (tens * 10) + ones;
 };
 
-// input is like 0.9,0.8
-const conversion = (rate) => {
-  const a = Math.random();
-  if (a < rate) {
-    return true;
-  }
-  return false;
-};
 
-const turndownRate = (surge, profile, rate) => {
-  const plus = rate || 1;
-  if (surge >= 1.1 && surge <= 1.5) {
-    conversion(profile[0] * plus);
-  }
-  if (surge >= 1.6 && surge <= 2) {
-    conversion(profile[1] * plus);
-  }
-  if (surge >= 2.1 && surge <= 3) {
-    conversion(profile[2] * plus);
-  }
-  if (surge >= 3.1 && surge <= 4) {
-    conversion(profile[3] * plus);
-  }
-  if (surge > 4) {
-    conversion(profile[4] * plus);
-  }
-};
 
 const makeliveTrip = (trip) => {
   const result = trip;
@@ -56,7 +30,6 @@ const makeliveTrip = (trip) => {
   result.rider_id = Math.floor(Math.random() * 200000);
   result['final-price'] = convertPrice(result.distance) / 100;
   result.zone = zoneNo(result['pickup-x'], result['pickup-y']);
-  result.confirm = conversion(conversionRate);
   result.created_at = new Date();
   return result;
 };
@@ -72,11 +45,9 @@ const getBatchTrips = (n) => {
     .then(results => results.map(trip => makeliveTrip(trip)))
     .then(results => db.select().from('riders').orderByRaw('RANDOM()').limit(n)
       .then((riders) => {
-        console.log(riders);
-        results.map((trip, i) => {
+        return results.map((trip, i) => {
           trip.rider_id = riders[i].id;
-          trip.profile = riders[i].type;
-          console.log(trip)
+          trip.rider_type = riders[i].type;
           return trip;
         })
       })
@@ -120,3 +91,16 @@ const getBatchTrips = (n) => {
 
 
 module.exports = getBatchTrips;
+
+
+// sample of output{
+//   'pickup-x': 4038,
+//   'pickup-y': 5883,
+//   'dropoff-x': 6733,
+//   'dropoff-y': 6775,
+//   distance: 3973,
+//   rider_id: 'a2be85e1-6b54-429d-93b0-b67e9f700aae',
+//   'final-price': 8.74,
+//   zone: 55,
+//   created_at: 2017-10-31T19:25:47.767Z,
+//   rider_type: { type: 'average', profile: [ 0.2, 0.3, 0.5, 0.7 ] } }

@@ -1,7 +1,7 @@
 const db = require('../src/db');
 const elasticsearch = require('elasticsearch');
 const Promise = require('bluebird');
-const getBatchTrips = require('./live-trip-generator.js')
+const getBatchTrips = require('./live-trip-helper.js')
 
 const log = console.log.bind(console);
 
@@ -22,7 +22,7 @@ function addToIndexEyeball(trip) {
   return client.index({
     index: 'trips',
     type: 'eyeball',
-    body: { zone: trip.zone }.
+    body: { zone: trip.zone },
   });
 }
 
@@ -40,7 +40,7 @@ const liveData = n => Promise.resolve()
       });
   }));
 
-module.exports = elastic;
+module.exports = addToIndex;
 //setInterval(() => liveData(5), 1000);
 
 

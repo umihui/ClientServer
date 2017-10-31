@@ -8,7 +8,7 @@ const db = require('../src/db');
 const app = express();
 const port = 3000;
 
-const cache = [];
+const cache = {};
 
 app.use(bodyParser.json());
 
@@ -20,26 +20,22 @@ app.use(bodyParser.json());
 
 
 app.post('/eyeball', (req, res) => {
-  const trip = req.body
-  cache.push(trip.zone);
+  const trip = req.body;
+  delete trip['rider_type'];
+  console.log('TRIP', trip)
+  cache[trip.zone] ? cache[trip.zone]++ : cache[trip.zone] = 1;
   db('requests').insert(trip)
-    .then(() => {
-      console.log('addindex', trip);
-      elastic.addToIndex(trip)
-        .then(() => res.end());
-    });
     // .then(() => {
-    //   if (trip.confirm) {
-    //     Util.getSurgeRatioByZone(trip.zone)
-    //       .then((result) => {
-    //         const surge = Number(result['surge-ratio']);
-    //         Util.applySurge(trip, surge)
-    //           .then(booking => Util.sendBooking(booking))
-    //           .then(() => console.log('sendbooking success'));
-    //       })
-    //   }
-    // })
-    
+    //   console.log('addindex', trip);
+    //   elastic.addToIndex(trip)
+    .then(() => {       
+      Util.getSurgeRatioByZone(trip.zone)
+        .then((result) => {
+          const surge = Number(result['surge-ratio']);
+          res.status(201).json(surge);;
+        });
+    });
+  // });
 });
 
 
@@ -49,7 +45,12 @@ app.post('/eyeball', (req, res) => {
 
 app.post('/booking', (req, res) => {
   const trip = req.body;
-
+  console.log('BOOKING >>>>>>>', trip);
+  delete trip.rider_type;
+  db('requests')
+    .where('rider_id', trip.rider_id)
+    .update(trip)
+    .then(() => res.status(200).end());
 });
 
 
