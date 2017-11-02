@@ -7,7 +7,8 @@ const log = console.log.bind(console);
 
 const client = new elasticsearch.Client({
   host: 'localhost:9200',
-  log: 'trace'
+  log: 'trace',
+  httpAuth: 'elastic:changeme',
 });
 
 function addToIndex(trip) {
@@ -22,7 +23,7 @@ function addToIndexEyeball(trip) {
   return client.index({
     index: 'trips',
     type: 'eyeball',
-    body: { zone: trip.zone },
+    body: { zone: trip.zone, created_at: trip.created_at },
   });
 }
 
@@ -40,8 +41,11 @@ const liveData = n => Promise.resolve()
       });
   }));
 
-module.exports = addToIndex;
-//setInterval(() => liveData(5), 1000);
+module.exports = {
+  addToIndex,
+  addToIndexEyeball
+};
+// setInterval(() => liveData(5), 1000);
 
 
 // db('requests').insert(makeliveTrip(trip)

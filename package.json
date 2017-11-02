@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/umihui/ClientServer#readme",
   "dependencies": {
+    "aws-sdk": "^2.142.0",
     "axios": "^0.17.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
@@ -27,6 +28,7 @@
     "path": "^0.12.7",
     "pg": "^7.3.0",
     "promise": "^8.0.1",
+    "sqs-consumer": "^3.8.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {

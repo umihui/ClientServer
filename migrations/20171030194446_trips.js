@@ -11,7 +11,8 @@ exports.up = function(knex, Promise) {
     }),
     knex.schema.createTable('riders', (table) => {
       table.string('id').primary();
-      table.json('type');
+      table.string('type');
+      table.json('profile');
     }),  
     knex.schema.createTable('surge-update-log', (table) => {
       table.increments('id').primary();
