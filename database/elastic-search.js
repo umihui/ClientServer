@@ -1,7 +1,6 @@
-const db = require('../src/db');
+const db = require('./db');
 const elasticsearch = require('elasticsearch');
 const Promise = require('bluebird');
-const getBatchTrips = require('./live-trip-helper.js')
 
 const log = console.log.bind(console);
 
@@ -31,15 +30,15 @@ function addToIndexEyeball(trip) {
 //   client.close();
 // }
 
-const liveData = n => Promise.resolve()
-  .then(() => getBatchTrips(n))
-  .then(results => results.forEach((trip) => {
-    db('requests').insert(trip)
-      .then(() => {
-        console.log('addindex', trip);
-        addToIndex(trip);
-      });
-  }));
+// const liveData = n => Promise.resolve()
+//   .then(() => getBatchTrips(n))
+//   .then(results => results.forEach((trip) => {
+//     db('requests').insert(trip)
+//       .then(() => {
+//         console.log('addindex', trip);
+//         addToIndex(trip);
+//       });
+//   }));
 
 module.exports = {
   addToIndex,

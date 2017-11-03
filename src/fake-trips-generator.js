@@ -1,5 +1,5 @@
 const FakeTrip = require('./fake-trips-helper');
-const db = require('./db');
+const db = require('../database/db');
 
 for (let i = 0; i < 100000; i++) {
   const trip = new FakeTrip();

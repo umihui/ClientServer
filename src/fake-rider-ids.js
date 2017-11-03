@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const db = require('./db');
+const db = require('../database/db');
 
 const type = {
   student: [0.4, 0.6, 0.8, 1, 1],

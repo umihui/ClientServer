@@ -1,11 +1,14 @@
 var AWS = require('aws-sdk');
+var uuid = require('uuid');
 
 AWS.config.loadFromPath('/Users/umihui/practice/ClientServer/server/config.json');
 
 var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
 var params = {
- QueueUrl: "https://sqs.us-west-1.amazonaws.com/732562083814/client-eyeball-sending"
+  MessageDeduplicationId: uuid.v4(),
+  MessageGroupId: 'eyeball',
+  QueueUrl: "https://sqs.us-west-2.amazonaws.com/732562083814/client-to-surge.fifo"
 };
 
 module.exports = sendEyeball = (message, cb) =>{ 

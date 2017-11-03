@@ -2,23 +2,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const Util = require('./Util');
-const elastic = require('../controller/elastic-search');
-const db = require('../src/db');
+const elastic = require('../database/elastic-search');
+const db = require('../database/db');
 const sendBooking = require('./booking-sending');
 const sendEyeball = require('./eyeball-sending');
 
 const app = express();
 const port = 3000;
 
-const cache = {};
+
+//store incoming eyeball, send every 10s
+let cache = {};
 
 app.use(bodyParser.json());
-
-
-// take in user request
-// convert to eyeball in memory
-// apply surge rate on  booking
-// response with surge price
 
 
 app.post('/eyeball', (req, res) => {
@@ -30,18 +26,18 @@ app.post('/eyeball', (req, res) => {
   } else {
     cache[trip.zone] = 1;
   }
-  db('requests').insert(trip)
-    .then(() => {
-      console.log('addindex', trip);
-      elastic.addToIndexEyeball(trip)
-        .then(() => {       
-          Util.getSurgeRatioByZone(trip.zone)
-            .then((result) => {
-              const surge = Number(result['surge-ratio']);
-              res.status(201).json(surge);;
-            });
-        });
-    });
+  trip.status = 'pending';
+  Util.getSurgeRatioByZone(trip.zone)
+    .then((result) => {
+      const surge = Number(result['surge-ratio']);
+      trip['surge-ratio'] = surge;
+      db('requests').insert(trip)
+        .then(() => {
+          console.log('addindex', trip);
+          elastic.addToIndex(trip)
+            .then(() => res.status(201).json(surge))
+        })
+    })
 });
 
 
@@ -53,30 +49,30 @@ app.post('/booking', (req, res) => {
   const trip = req.body;
   //console.log('BOOKING >>>>>>>', trip);
   delete trip.rider_type;
+  trip.status = 'accepted';
   db('requests')
     .where('rider_id', trip.rider_id)
     .update(trip)
-    .then(() => {
-      console.log('ELASTIC SEARCH BOOKING',trip);
-      return elastic.addToIndex(trip)
        // send booking to SQS
       .then(() => sendBooking(trip, (err, result) => {
         if (err) {
           console.log('FAIL SEND', err)
         } else {
+          console.log('SQS BOOKING')
           res.status(200).end();
         }
-      }))
-    })
- 
+      })) 
 });
 
-const sendEyeballInterval = setInterval(() => {
+
+const sendEyeballInterval = setInterval(() => 
   sendEyeball(cache, (err, result) => {  
     if (err) {
-      console.log('FAIL SEND', err)
+      console.log('FAIL SEND', err);
     } else {
-      console.log('Send eyeball');
+      console.log('Send eyeball',cache);
+      cache = {};
+      console.log('after',cache);
     }
   }), 10000);
 

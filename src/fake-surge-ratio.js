@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('../database/db');
 
 // first time run
 for (let i = 1 ; i <= 100; i++) {
