@@ -39,7 +39,7 @@ exports.up = function(knex, Promise) {
 exports.down = function(knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('trips'),
-    knex.schema.dropTable('requests'),
+    knex.schema.dropTableIfExists('requests'),
     knex.schema.dropTable('riders'),
     knex.schema.dropTable('surge-update-log'),
   ]);

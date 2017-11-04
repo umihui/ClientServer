@@ -77,7 +77,7 @@ const turndownRate = (surge, profile) => {
 // apply surge ratio on incoming trips
 const applySurge = (trip, surge) => {
   const result = trip;
-  const price = trip['final-price'] * surge;
+  const price = trip['base-price'] * surge;
   result['final-price'] = Math.round(price * 100) / 100;
   result['surge-ratio'] = surge;
   return Promise.resolve(result);

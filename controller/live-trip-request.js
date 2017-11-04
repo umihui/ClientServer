@@ -6,7 +6,7 @@ let count = 0;
 const generateRandomBatch = () => {
   console.log('COUNT >>>>>>>>>>', count);
   count += 1;
-  const n = Math.floor(Math.random() * 10);
+  const n = Math.floor(Math.random() * 100);
   helper.getBatchTrips(n)
     .then((results) => {
       results.forEach((trip) => {

@@ -1,6 +1,22 @@
 // Update with your config settings.
 
 module.exports = {
+  test: {
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      user: 'umihui',
+      password: '',
+      database: 'uber-test'
+    },
+    debug: true,
+    migrations: {
+      directory: './migrations'
+    },
+    seeds: {
+      directory: './database/seeds/test'
+    }
+  },
 
   development: {
     client: 'pg',
