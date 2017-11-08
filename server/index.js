@@ -6,18 +6,40 @@ const elastic = require('../database/elastic-search');
 const db = require('../database/db');
 const sendBooking = require('./booking-sending');
 const sendEyeball = require('./eyeball-sending');
-
-const app = express();
-const port = 3000;
+const setupConsumers = require('./polling-sqs');
 
 
+var cluster = require('cluster');
+var numCPUs = require('os').cpus().length;
+
+if (cluster.isMaster) {
+
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', function(worker, code, signal) {
+    console.log('worker ' + worker.process.pid + ' died');
+  });
+} else {
+
+  const app = express();
+  const port = 3000;
 //store incoming eyeball, send every 10s
 let cache = {};
+let count = 0;
+let dbCount = 0;
+let bookingCount = 0;
+let sqsCount = 0;
+let eyeballRes = 0;
+
 
 app.use(bodyParser.json());
 
 
 app.post('/eyeball', (req, res) => {
+  count += 1;
+  console.log('EYEBALL RECEIVE >>>>',count);
   const trip = req.body;
   delete trip.rider_profile;
   console.log('TRIP', trip);
@@ -31,12 +53,16 @@ app.post('/eyeball', (req, res) => {
     .then((result) => {
       const surge = Number(result['surge-ratio']);
       trip['surge-ratio'] = surge;
-      db('requests').insert(trip)
-        .then(() => {
-          console.log('addindex', trip);
-          elastic.addToIndex(trip)
-            .then(() => res.status(201).json(surge))
-        })
+      eyeballRes++;
+      console.log('EYE RESPONSE', eyeballRes);
+      res.status(201).json(surge);
+      // db('requests').insert(trip)
+      //   .then(() => {
+      //     dbCount++;
+      //     console.log('addindex >>>>>>>>>', dbCount);
+      //     elastic.addToIndex(trip)
+            
+      //   })
     })
 });
 
@@ -46,22 +72,36 @@ app.post('/eyeball', (req, res) => {
 // send eyeball sum to surge per 10 seconds
 
 app.post('/booking', (req, res) => {
+  bookingCount++
   const trip = req.body;
-  //console.log('BOOKING >>>>>>>', trip);
+  console.log('BOOKING >>>>>>>', bookingCount);
   delete trip.rider_type;
   trip.status = 'accepted';
-  db('requests')
-    .where('rider_id', trip.rider_id)
-    .update(trip)
-       // send booking to SQS
-      .then(() => sendBooking(trip, (err, result) => {
-        if (err) {
-          console.log('FAIL SEND', err)
-        } else {
-          console.log('SQS BOOKING')
-          res.status(200).end();
-        }
-      })) 
+  sendBooking(trip, (err, result) => {
+    if (err) {
+      console.log('FAIL SEND', err)
+    } else {
+      sqsCount++;
+      console.log('SQS BOOKING', sqsCount);
+      res.status(200).end();
+    }
+  })
+
+
+
+  // db('requests')
+  //   .where('rider_id', trip.rider_id)
+  //   .update(trip)
+  //      // send booking to SQS
+  //     .then(() => sendBooking(trip, (err, result) => {
+  //       if (err) {
+  //         console.log('FAIL SEND', err)
+  //       } else {
+  //         sqsCount++;
+  //         console.log('SQS BOOKING', sqsCount);
+  //         res.status(200).end();
+  //       }
+  //     })) 
 });
 
 
@@ -79,6 +119,9 @@ const sendEyeballInterval = setInterval(() =>
 
 
 
-app.listen(port, () => {
+  module.exports = app.listen(port, () => {
   console.log(`Shortly is listening on ${port}`);
 });
+
+const getSurgeRate = setInterval(setupConsumers, 5000);
+}

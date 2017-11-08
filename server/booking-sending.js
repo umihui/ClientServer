@@ -2,7 +2,13 @@ var AWS = require('aws-sdk');
 var uuid = require('uuid');
 var md5 = require('md5');
 var Producer = require('sqs-producer');
-AWS.config.loadFromPath('/Users/umihui/practice/ClientServer/server/config.json');
+const  config = require('./config.js').outingSQS;
+
+AWS.config.update({
+  region: 'us-west-2',
+  accessKeyId:  config.accessKeyId,
+  secretAccessKey:  config.secretAccessKey
+});
 
 var producer = Producer.create({
   queueUrl: 'https://sqs.us-west-2.amazonaws.com/732562083814/client-to-matching.fifo',

@@ -1,7 +1,12 @@
 var AWS = require('aws-sdk');
 var uuid = require('uuid');
+const config = require('./config.js').outingSQS;
 
-AWS.config.loadFromPath('/Users/umihui/practice/ClientServer/server/config.json');
+AWS.config.update({
+  region: 'us-west-2',
+  accessKeyId: config.accessKeyId,
+  secretAccessKey: config.secretAccessKey
+});
 
 var sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 

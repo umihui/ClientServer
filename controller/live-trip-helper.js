@@ -29,7 +29,7 @@ const makeliveTrip = (trip) => {
 const getBatchTrips = (n) => {
   const values = [];
   for (let i = 0; i < n; i++) {
-    const a = Math.random() * 94400;
+    const a = Math.random() * 189200;
     values.push(Math.round(a));
   }
   return db.select().from('trips')
@@ -89,6 +89,8 @@ module.exports = {
   turndownRate,
   applySurge
 };
+
+//getBatchTrips(1000).then(() => console.log('done'));
 
 // sample of output{
 //   'pickup-x': 4038,

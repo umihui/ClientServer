@@ -1,25 +1,32 @@
 const helper = require('./live-trip-helper');
 const axios = require('axios');
 
+
 let count = 0;
+let bookingCount = 0;
+let nobooking = 0;
 
 const generateRandomBatch = () => {
-  console.log('COUNT >>>>>>>>>>', count);
-  count += 1;
-  const n = Math.floor(Math.random() * 100);
+  //console.log('COUNT >>>>>>>>>>', count);
+  const n = Math.floor(Math.random() * 1000);
+  
   helper.getBatchTrips(n)
     .then((results) => {
       results.forEach((trip) => {
+        count += 1;
+        console.log('COUNT BEFORE Axios >>>>>>>>', count);
         return axios({
           method: 'post',
           url: 'http://localhost:3000/eyeball',
           data: trip,
+          timeout: 10000
         })
           .then((response) => {
             // response here should be surge ratio
-            console.log('TEST >>>>>', response.data, trip.rider_profile.profile);
             const confirm = helper.turndownRate(response.data, trip.rider_profile.profile);
             if (confirm) {
+              bookingCount++;
+              console.log('LIVE BOOKING >>>>>>>>>>', bookingCount)
               delete trip.rider_profile;
               helper.applySurge(trip, response.data)
                 .then(result => axios({
@@ -27,10 +34,11 @@ const generateRandomBatch = () => {
                   url: 'http://localhost:3000/booking',
                   data: trip,
                 })
-                  .then(() => console.log('success booking'))
+                  .then(() => console.log('success booking '))
                 );
             } else {
-              console.log('NO BOOKING');
+              nobooking++;
+              console.log('NO BOOKING', nobooking);
             }
           })
           .catch((err) => {
@@ -41,11 +49,14 @@ const generateRandomBatch = () => {
 };  
 
 
-const interval = setInterval(generateRandomBatch, 500);
+//const interval = setInterval(generateRandomBatch, 1000);
+generateRandomBatch();
+generateRandomBatch();
 
-while (count > 40) {
-  console.log('cleaning interval id:', interval);
-  clearInterval(interval);
+
+module.exports = () => {
+  const interval = setInterval(generateRandomBatch, 1000);
+  return interval;
 }
 
 // console.log("INTERVAL ID is", interval);
