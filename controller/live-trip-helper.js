@@ -45,19 +45,15 @@ const makeValues= (n) => {
 const getBatchTrips = (n) => {
   return makeValues(n)
     .then((values) => {
-      console.log(values);
       return db.select().from('trips')
         .whereIn('id', values)
-        .then(results => {console.log('data', results.length); return results.map(trip => makeliveTrip(trip))})
+        .then(results => results.map(trip => makeliveTrip(trip)))
         .then(results => db.select().from('riders').orderByRaw('RANDOM()').limit(n)
-          .then((riders) => {
-            console.log('result',results.length, riders.length)
-            return results.map((trip, i) => {
+          .then(riders => results.map((trip, i) => {
               trip.rider_id = riders[i].id;
               trip.rider_profile = riders[i].profile;
               return trip;
-            })
-          })
+            }))
         );
     });
   

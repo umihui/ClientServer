@@ -6,3 +6,4 @@ utility
 .gitignore
 package-lock.json
 *.json
+config.js

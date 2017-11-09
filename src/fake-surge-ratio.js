@@ -1,6 +1,6 @@
 const db = require('../database/db');
 
-// first time run
+//first time run
 for (let i = 1 ; i <= 100; i++) {
   db('surge-update-log').insert({zone: i, 'surge-ratio': 1}).then(() => true);
 }

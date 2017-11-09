@@ -18,6 +18,7 @@ function addToIndex(trip) {
   });
 }
 
+
 function addToIndexEyeball(trip) {
   return client.index({
     index: 'trips',
@@ -42,7 +43,8 @@ function addToIndexEyeball(trip) {
 
 module.exports = {
   addToIndex,
-  addToIndexEyeball
+  addToIndexEyeball,
+  client
 };
 // setInterval(() => liveData(5), 1000);
 

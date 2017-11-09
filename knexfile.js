@@ -26,9 +26,12 @@ module.exports = {
       password: '',
       database: 'uber'
     },
-    debug: true,
+    //debug: true,
     migrations: {
       directory: './migrations'
+    },
+    seeds: {
+      directory: './seeds'
     }
   }
 

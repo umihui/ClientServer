@@ -29,6 +29,7 @@
     "path": "^0.12.7",
     "pg": "^7.3.0",
     "promise": "^8.0.1",
+    "response-time": "^2.3.2",
     "sqs-consumer": "^3.8.0",
     "sqs-producer": "^1.6.1",
     "uuid": "^3.1.0"
@@ -41,7 +42,8 @@
     "eslint": "^4.10.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
-    "mocha": "^4.0.1"
+    "mocha": "^4.0.1",
+    "supertest": "^3.0.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",

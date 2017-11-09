@@ -12,7 +12,7 @@ exports.up = function(knex, Promise) {
       table.integer('distance');
       table.decimal('base-price');
       table.decimal('final-price').nullable();
-      table.decimal('surge-ratio', 3, 1);
+      table.decimal('surge-ratio', 3, 1).nullable();
       table.integer('zone');
       table.enum('status',['pending', 'accepted', 'cancelled']);
       table.timestamp('created_at');
