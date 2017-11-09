@@ -26,24 +26,41 @@ const makeliveTrip = (trip) => {
   return result;
 };
 
-const getBatchTrips = (n) => {
+const makeValues= (n) => {
   const values = [];
-  for (let i = 0; i < n; i++) {
+  const cache = {};
+  let i = 0;
+  while(i < n) {
     const a = Math.random() * 189200;
-    values.push(Math.round(a));
+    const b = Math.round(a);
+    if(!cache[b] && b !== 0) {
+      values.push(b);
+      cache[b] = true;
+      i++;
+    }
   }
-  return db.select().from('trips')
-    .whereIn('id', values)
-    .then(results => results.map(trip => makeliveTrip(trip)))
-    .then(results => db.select().from('riders').orderByRaw('RANDOM()').limit(n)
-      .then((riders) => {
-        return results.map((trip, i) => {
-          trip.rider_id = riders[i].id;
-          trip.rider_profile = riders[i].profile;
-          return trip;
-        })
-      })
-    );
+  return Promise.resolve(values);
+};
+
+const getBatchTrips = (n) => {
+  return makeValues(n)
+    .then((values) => {
+      console.log(values);
+      return db.select().from('trips')
+        .whereIn('id', values)
+        .then(results => {console.log('data', results.length); return results.map(trip => makeliveTrip(trip))})
+        .then(results => db.select().from('riders').orderByRaw('RANDOM()').limit(n)
+          .then((riders) => {
+            console.log('result',results.length, riders.length)
+            return results.map((trip, i) => {
+              trip.rider_id = riders[i].id;
+              trip.rider_profile = riders[i].profile;
+              return trip;
+            })
+          })
+        );
+    });
+  
 };
 
 // input is like 0.9,0.8
@@ -90,7 +107,14 @@ module.exports = {
   applySurge
 };
 
-//getBatchTrips(1000).then(() => console.log('done'));
+getBatchTrips(10000).then((result) => console.log('done',result.length));
+
+//const isEqual = (arr) => arr.reduce((result, acc, i) => (acc === arr[i + 1] || result) ? true : false, false);
+
+// makeValues(10000).then((result) => {
+//   result = result.sort((a,b) => a - b);
+//   console.log(isEqual(result));
+// });
 
 // sample of output{
 //   'pickup-x': 4038,
