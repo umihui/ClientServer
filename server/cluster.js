@@ -144,11 +144,11 @@ if (cluster.isMaster) {
   
   setInterval(() => {
     Util.getSurgeRateUpdate().then(result => {
-      console.log('got surge rate', result);
+      console.log('got surge rate');
       surgeRate = result;
     })
   }, 5000);
-  
+
   setInterval(() => 
     sendEyeball(cache, (err, result) => {  
       if (err) {
@@ -254,23 +254,23 @@ if (cluster.isMaster) {
   // send booking to messege bus
   // send eyeball sum to surge per 10 seconds
 
-  app.post('/booking', (req, res) => {
-    bookingCount++
-    const trip = req.body;
-    console.log('BOOKING >>>>>>>', bookingCount);
-    delete trip.rider_type;
-    trip.status = 'accepted';
-    res.status(200).end();
-    sendBooking(trip, (err, result) => {
-      if (err) {
-        console.log('FAIL SEND', err)
-      } else {
-        sqsCount++;
-        console.log('SQS BOOKING', sqsCount);        
-      }
-    })
+  // app.post('/booking', (req, res) => {
+  //   bookingCount++
+  //   const trip = req.body;
+  //   console.log('BOOKING >>>>>>>', bookingCount);
+  //   delete trip.rider_type;
+  //   trip.status = 'accepted';
+  //   res.status(200).end();
+  //   sendBooking(trip, (err, result) => {
+  //     if (err) {
+  //       console.log('FAIL SEND', err)
+  //     } else {
+  //       sqsCount++;
+  //       console.log('SQS BOOKING', sqsCount);        
+  //     }
+  //   })
 
-  });
+  // });
 
   app.listen(port, () => {
     console.log(`Worker started`);

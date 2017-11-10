@@ -52,4 +52,5 @@ const storeTrip = (trips) => {
 
 module.exports.eyeballsByZone = eyeballsByZone;
 module.exports.getSurgeRateUpdate = getSurgeRateUpdate;
+module.exports.getSurgeRatioByZone = getSurgeRatioByZone;
 module.exports.storeTrip = storeTrip;

@@ -9,6 +9,19 @@ let nobooking = 0;
 
 let sendAmount = 0;
 
+const requestBooking = (trip) => {
+  return axios({
+    method: 'post',
+    url: 'http://localhost:8080/booking',
+    data: trip,
+    //timeout: 10000
+  })
+    .then((response) => console.log('success booking ', response.headers))
+    .catch((err) => {
+      console.log('fail', err.config.url);
+    });
+}
+
 const generateRandomBatch = () => {
   //console.log('COUNT >>>>>>>>>>', count);
   const n = Math.floor(Math.random() * 1000);
@@ -36,7 +49,7 @@ const generateRandomBatch = () => {
               helper.applySurge(trip, response.data)
                 .then(result => axios({
                   method: 'post',
-                  url: 'http://localhost:3000/booking',
+                  url: 'http://localhost:8080/booking',
                   data: trip,
                   //timeout: 10000
                 })

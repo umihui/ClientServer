@@ -4,5 +4,4 @@ fake-rider-ids.json
 lib
 utility
 package-lock.json
-*.json
 config.js

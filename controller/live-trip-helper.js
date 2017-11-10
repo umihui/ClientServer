@@ -62,7 +62,6 @@ const getBatchTrips = (n) => {
 // input is like 0.9,0.8
 const conversion = (rate) => {
   const a = Math.random();
-  console.log(a, rate);
   if (a < rate) {
     return false;
   }
