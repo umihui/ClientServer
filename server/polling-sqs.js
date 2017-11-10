@@ -19,6 +19,7 @@ module.exports = setupConsumers = () => {
     handleMessage: (message, done) => {
       console.log('polling',new Date(), message.Body);
       const data = JSON.parse(message.Body);
+      console.log(typeof data);
       data.multipliers.forEach(function(element) {
         const surge = {zone: element.zone, "surge-ratio": element.multiplier}
         return db('surge-update-log').insert(surge).then(() => true).catch(err => console.log(err));

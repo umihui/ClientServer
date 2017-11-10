@@ -1,7 +1,6 @@
 const db = require('../database/db');
 const axios = require('axios');
 const Promise = require('bluebird');
-//const elastic = require('../database/elastic-search');
 
 // get the latest surge-ratio from db
 // output : { 'surge-ratio': '1.4' } value is string
@@ -11,8 +10,21 @@ const getSurgeRatioByZone = zoneNum => db('surge-update-log')
   .orderBy('created_at', 'desc')
   .first();
 
-//getSurgeRatioByZone(1).then(()=> console.log('done'));
-// batching trips in cache
+const getSurgeRateUpdate = () => {
+  console.log('INTO Surge update')
+  const result = {};
+  const helper = (i) => {
+    if (i === 101) {
+      return Promise.resolve(result);
+    }
+    return getSurgeRatioByZone(i).then(surge => {
+      result[i] = surge['surge-ratio'];
+      return helper(i + 1);
+    }); 
+  }
+  return helper(1); 
+}
+
 const eyeballsByZone = (cache, callback) => {
   const temp = {};
   cache.forEach((zone) => {
@@ -39,5 +51,5 @@ const storeTrip = (trips) => {
 
 
 module.exports.eyeballsByZone = eyeballsByZone;
-module.exports.getSurgeRatioByZone = getSurgeRatioByZone;
+module.exports.getSurgeRateUpdate = getSurgeRateUpdate;
 module.exports.storeTrip = storeTrip;

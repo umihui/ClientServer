@@ -22,7 +22,7 @@ const generateRandomBatch = () => {
           method: 'post',
           url: 'http://localhost:3000/eyeball',
           data: trip,
-          timeout: 10000
+          //timeout: 15000
         })
           .then((response) => {
             resCount++;
@@ -40,9 +40,9 @@ const generateRandomBatch = () => {
                   data: trip,
                   //timeout: 10000
                 })
-                  .then(() => console.log('success booking '))
+                  .then((response) => console.log('success booking ', response.headers))
                   .catch((err) => {
-                    console.log('fail', err);
+                    console.log('fail', err.config.url);
                   })
                 );
             } else {
