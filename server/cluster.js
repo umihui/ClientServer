@@ -169,72 +169,23 @@ if (cluster.isMaster) {
       Util.storeTrip(temp)
         // .then(() => {
           
-          // const bulktrip = cache.map(ele => {return {trip: ele}});
-          // console.log('elastic', bulktrip);
-          // elastic.client.bulk({
-          //   index: 'trips',
-          //   body: bulktrip}, (err, result) => {
-          //   if(err) {console.log('elastic',err)}
-          //   else {
-          //     console.log('elastic SUCCESS');          
-          //   }
-          // })
         //   //cache.forEach((trip) => elastic.addToIndex(trip).then(()=> console.log('add index elastic success')).catch((err)=>console.log('elastic',err)))
         // });
       
     }  
   }, 1000);
   
-
   cluster.on('exit', function(worker, code, signal) {
     console.log('worker ' + worker.process.pid + ' died');
   });
-
 } else {
-
   const app = express();
   const port = 3000;
-  // //store incoming eyeball, send every 10s
-
-
-
-
-  // app.post('/booking', (req, res) => {
-  //   bookingCount++
-  //   const trip = req.body;
-  //   console.log('BOOKING >>>>>>>', bookingCount);
-  //   delete trip.rider_type;
-  //   trip.status = 'accepted';
-  //   sendBooking(trip, (err, result) => {
-  //     if (err) {
-  //       console.log('FAIL SEND', err)
-  //     } else {
-  //       sqsCount++;
-  //       console.log('SQS BOOKING', sqsCount);
-  //       res.status(200).end();
-  //     }
-  //   })
-
-
-
-  //   // db('requests')
-  //   //   .where('rider_id', trip.rider_id)
-  //   //   .update(trip)
-  //   //      // send booking to SQS
-  //   //     .then(() => sendBooking(trip, (err, result) => {
-  //   //       if (err) {
-  //   //         console.log('FAIL SEND', err)
-  //   //       } else {
-  //   //         sqsCount++;
-  //   //         console.log('SQS BOOKING', sqsCount);
-  //   //         res.status(200).end();
-  //   //       }
-  //   //     })) 
-  // });
-
+  
   app.use(bodyParser.json());
   app.use(responseTime());
 
+  // //store incoming eyeball, send every 10s
   app.post('/eyeball', (req, res) => {
 
     const trip = req.body;
@@ -242,35 +193,10 @@ if (cluster.isMaster) {
     const zone = trip.zone;
     trip.status = 'pending';
     process.send({ cmd: 'notifyRequest', trip: trip });
-    
-    //tripCache.push(trip);
     const surge = surgeRate[zone];
     trip['surge-ratio'] = surge;
     res.status(201).json(surge);
   });
-
-
-  // confirm booking come with surge price
-  // send booking to messege bus
-  // send eyeball sum to surge per 10 seconds
-
-  // app.post('/booking', (req, res) => {
-  //   bookingCount++
-  //   const trip = req.body;
-  //   console.log('BOOKING >>>>>>>', bookingCount);
-  //   delete trip.rider_type;
-  //   trip.status = 'accepted';
-  //   res.status(200).end();
-  //   sendBooking(trip, (err, result) => {
-  //     if (err) {
-  //       console.log('FAIL SEND', err)
-  //     } else {
-  //       sqsCount++;
-  //       console.log('SQS BOOKING', sqsCount);        
-  //     }
-  //   })
-
-  // });
 
   app.listen(port, () => {
     console.log(`Worker started`);

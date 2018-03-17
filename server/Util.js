@@ -10,6 +10,7 @@ const getSurgeRatioByZone = zoneNum => db('surge-update-log')
   .orderBy('created_at', 'desc')
   .first();
 
+//output: object of 100 zone's surge rate
 const getSurgeRateUpdate = () => {
   console.log('INTO Surge update')
   const result = {};

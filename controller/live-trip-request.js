@@ -14,7 +14,7 @@ const requestBooking = (trip) => {
     method: 'post',
     url: 'http://localhost:8080/booking',
     data: trip,
-    //timeout: 10000
+    timeout: 10000
   })
     .then((response) => console.log('success booking ', response.headers))
     .catch((err) => {
@@ -23,8 +23,7 @@ const requestBooking = (trip) => {
 }
 
 const generateRandomBatch = () => {
-  //console.log('COUNT >>>>>>>>>>', count);
-  const n = Math.floor(Math.random() * 1000);
+  const n = 100;//Math.floor(Math.random() * 1000);
   sendAmount += n;
   helper.getBatchTrips(n)
     .then((results) => {
@@ -35,7 +34,7 @@ const generateRandomBatch = () => {
           method: 'post',
           url: 'http://localhost:3000/eyeball',
           data: trip,
-          //timeout: 15000
+          timeout: 10000
         })
           .then((response) => {
             resCount++;
@@ -47,17 +46,7 @@ const generateRandomBatch = () => {
               console.log('LIVE BOOKING >>>>>>>>>>', bookingCount)
               delete trip.rider_profile;
               helper.applySurge(trip, response.data)
-                .then(result => axios({
-                  method: 'post',
-                  url: 'http://localhost:8080/booking',
-                  data: trip,
-                  //timeout: 10000
-                })
-                  .then((response) => console.log('success booking ', response.headers))
-                  .catch((err) => {
-                    console.log('fail', err.config.url);
-                  })
-                );
+                .then(result => requestBooking(trip));
             } else {
               nobooking++;
               console.log('NO BOOKING', nobooking);
@@ -71,12 +60,8 @@ const generateRandomBatch = () => {
 };  
 
 
-// while (sendAmount < 10000) {
-//   generateRandomBatch();
-// }
-
 function runAThousand() {
-  if (sendAmount >= 10000) {
+  if (sendAmount >= 1000) {
     return;
   }
   generateRandomBatch();

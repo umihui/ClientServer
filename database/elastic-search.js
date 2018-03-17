@@ -46,7 +46,3 @@ module.exports = {
   addToIndexEyeball,
   client
 };
-// setInterval(() => liveData(5), 1000);
-
-
-// db('requests').insert(makeliveTrip(trip)
